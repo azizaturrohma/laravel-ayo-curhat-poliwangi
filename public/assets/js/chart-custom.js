@@ -48,7 +48,7 @@
             series: [
                 {
                     name: "Desktops",
-                    data: {!! json_encode($counselingCounts) !!},
+                    data: json_encode($counselingCounts),
                 },
             ],
             dataLabels: {

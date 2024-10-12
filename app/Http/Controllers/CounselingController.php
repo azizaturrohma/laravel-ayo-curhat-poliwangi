@@ -6,6 +6,7 @@ use App\Models\Counseling;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Events\CounselingMessages;
 
 class CounselingController extends Controller
 {
@@ -28,8 +29,9 @@ class CounselingController extends Controller
             'receiver_id' => auth()->user()->getRoleNames()[0] == 'Tamu Satgas' ? 1 : $request->receiver_id,
             'message' => $request->message,
         ]);
-
-        return redirect()->back();
+        // CounselingMessages::dispatch($message);
+        // event(new CounselingMessages($message));
+        return back();
     }
 
     public function getMessages($receiverId)

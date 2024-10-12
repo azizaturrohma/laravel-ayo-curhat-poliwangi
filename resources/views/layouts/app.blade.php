@@ -21,16 +21,17 @@
     <link rel='stylesheet' href="{{ asset('assets/vendor/fullcalendar/timegrid/main.css') }}" />
     <link rel='stylesheet' href="{{ asset('assets/vendor/fullcalendar/list/main.css') }} " />
     <link rel="stylesheet" href="{{ asset('assets/vendor/mapbox/mapbox-gl.css') }}" />
+    @stack('scripts')
 
     @yield('style')
 </head>
 
 <body class=" color-light ">
     <!-- loader Start -->
-    <div id="loading">
+    {{-- <div id="loading">
         <div id="loading-center">
         </div>
-    </div>
+    </div> --}}
     <!-- loader End -->
 
     <!-- Wrapper Start -->

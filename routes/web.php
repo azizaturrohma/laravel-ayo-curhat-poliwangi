@@ -63,5 +63,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [CounselingController::class, 'index'])->name('counselings.index');
         Route::post('/send', [CounselingController::class, 'sendMessage'])->name('counselings.send');
         Route::get('/{receiverId}', [CounselingController::class, 'getMessages'])->name('counselings.messages');
+        // event(new CounselingMessages('hello world'));
     });
 });
