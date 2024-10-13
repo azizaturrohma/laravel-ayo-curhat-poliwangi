@@ -29,9 +29,23 @@ class CounselingController extends Controller
             'receiver_id' => auth()->user()->getRoleNames()[0] == 'Tamu Satgas' ? 1 : $request->receiver_id,
             'message' => $request->message,
         ]);
+
+        $sendMessage = [
+            'sender_id' => $message->sender_id,
+            'receiver_id' => $message->receiver_id,
+            'time' => $message->created_at->format('D, d/mY'),
+            'message' => $message->message,
+        ];
+
+
         // CounselingMessages::dispatch($message);
-        // event(new CounselingMessages($message));
-        return back();
+       event(new CounselingMessages($sendMessage));
+        // broadcast(new CounselingMessages($request->get('message')))->toOthers();
+        // dd($sendMessage);
+        // return view('sendMessage', ['message' => $request->get('message')]);
+        return redirect()->back()->with(['success'=>'Post telah berhasil']);
+        // return response()->json(['message' => 'Message Succesfully!', 'data' => $counseling ]);
+
     }
 
     public function getMessages($receiverId)
@@ -42,8 +56,11 @@ class CounselingController extends Controller
         })->where(function ($query) use ($receiverId) {
             $query->where('sender_id', $receiverId)
                 ->orWhere('receiver_id', $receiverId);
+            // })->orderBy('created_at', 'asc')
         })->get();
 
-        return response()->json($messages);
-    }
+        // return response()->json($messages);
+        // return view('getMessage', ['message' => $request->get('message')]);
+        return view('getMessages', compact('messages'));
+}
 }

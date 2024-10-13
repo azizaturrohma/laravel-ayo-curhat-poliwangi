@@ -10,18 +10,18 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CounselingMessages
+class CounselingMessages implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $message;
+    public $data;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($message)
+    public function __construct($data)
     {
-        $this->message = $message;
+        $this->data = $data;
         //
     }
 
@@ -33,11 +33,11 @@ class CounselingMessages
     public function broadcastOn(): array
     {
         return [
-            new Channel('counseling-messages', $this->message),
+            new Channel('counseling_messages'),
         ];
     }
     public function broadcastAs()
     {
-        return 'counseling-message';
+        return 'counseling';
     }
 }

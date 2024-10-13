@@ -15,6 +15,7 @@
     },
     "dependencies": {
         "apexcharts": "^3.49.2",
-        "flowbite": "^2.4.1"
+        "flowbite": "^2.4.1",
+        "jquery": "^3.7.1"
     }
 }
