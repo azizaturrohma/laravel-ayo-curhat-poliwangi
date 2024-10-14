@@ -33,15 +33,15 @@ class CounselingController extends Controller
         $sendMessage = [
             'sender_id' => $message->sender_id,
             'receiver_id' => $message->receiver_id,
-            'time' => $message->created_at->format('D, d/mY'),
+            'time' => $message->created_at->format('D, d/m/Y'),
             'message' => $message->message,
         ];
 
 
         // CounselingMessages::dispatch($message);
+        // return dd($sendMessage);
        event(new CounselingMessages($sendMessage));
         // broadcast(new CounselingMessages($request->get('message')))->toOthers();
-        // dd($sendMessage);
         // return view('sendMessage', ['message' => $request->get('message')]);
         return redirect()->back()->with(['success'=>'Post telah berhasil']);
         // return response()->json(['message' => 'Message Succesfully!', 'data' => $counseling ]);
