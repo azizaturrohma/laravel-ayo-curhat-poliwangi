@@ -17,7 +17,7 @@ class CounselingController extends Controller
         $users = User::role('Tamu Satgas')->get();
         $adminId = User::role('Admin')->first()->id;
 
-        $chats = auth()->user()->getRoleNames()[0] == 'Tamu Satgas' ? Counseling::where('sender_id', auth()->user()->id)->orWhere('receiver_id', auth()->user()->id)->orderBy('created_at', 'ASC')->get() : [];
+        $chats = auth()->user()->getRoleNames()[0] == ['Tamu Satgas', 'Admin'] ? Counseling::where('sender_id', auth()->user()->id)->orWhere('receiver_id', auth()->user()->id)->orderBy('created_at', 'ASC')->get() : [];
 
         return view('counseling.index', compact('title', 'users', 'adminId', 'chats'));
     }
@@ -26,7 +26,7 @@ class CounselingController extends Controller
     {
         $message = Counseling::create([
             'sender_id' => Auth::id(),
-            'receiver_id' => auth()->user()->getRoleNames()[0] == 'Tamu Satgas' ? 1 : $request->receiver_id,
+            'receiver_id' => in_array(auth()->user()->getRoleNames()[0], ['Tamu Satgas', 'admin']) ? 1 : $request->receiver_id,
             'message' => $request->message,
         ]);
 
@@ -40,11 +40,12 @@ class CounselingController extends Controller
 
         // CounselingMessages::dispatch($message);
         // return dd($sendMessage);
+        // $sendMessage = $request->input('message');
        event(new CounselingMessages($sendMessage));
         // broadcast(new CounselingMessages($request->get('message')))->toOthers();
         // return view('sendMessage', ['message' => $request->get('message')]);
-        return redirect()->back()->with(['success'=>'Post telah berhasil']);
-        // return response()->json(['message' => 'Message Succesfully!', 'data' => $counseling ]);
+        // return redirect()->back()->with(['success'=>'Post telah berhasil']);
+        return response()->json(['message' => 'Message Succesfully!', 'data' => $sendMessage ]);
 
     }
 

@@ -100,39 +100,27 @@
                                                             ->orderBy('created_at', 'asc')
                                                             ->get();
                                                     @endphp
-                                                    @foreach ($chats as $chat)
-                                                        <div
-                                                            class="chat {{ $chat->sender_id != auth()->user()->id ? 'chat-left' : '' }}">
-                                                            {{--  --}}
-                                                            <div class="chat-user">
-                                                                <a class="avatar m-0">
-                                                                    <img src="{{ asset('assets/images/pages/user.png') }}"
-                                                                        alt="avatar" class="avatar-35">
-                                                                </a>
-                                                                <span
-                                                                    class="chat-time mt-1">{{ date('H:i', strtotime($chat->created_at)) }}</span>
-                                                            </div>
-                                                            <div class="chat-detail" name="chat-detail" id="chat-detail">
-                                                                <div class="chat-message">
-                                                                    <p>{{ $chat->message }}</p>
+                                                    <div class="bubble">
+                                                        @foreach ($chats as $chat)
+                                                            <div
+                                                                class="chat {{ $chat->sender_id != auth()->user()->id ? 'chat-left' : '' }}">
+                                                                {{--  --}}
+                                                                <div class="chat-user">
+                                                                    <a class="avatar m-0">
+                                                                        <img src="{{ asset('assets/images/pages/user.png') }}"
+                                                                            alt="avatar" class="avatar-35">
+                                                                    </a>
+                                                                    <span
+                                                                        class="chat-time mt-1">{{ date('H:i', strtotime($chat->created_at)) }}</span>
+                                                                </div>
+                                                                <div class="chat-detail" name="chat-detail">
+                                                                    <div class="chat-message">
+                                                                        <p>{{ $chat->message }}</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                                <div class="chat-footer p-3 bg-white">
-                                                    <form class="d-flex align-items-center " id="receiver_id"
-                                                        action="{{ route('counselings.send') }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="receiver_id" id="receiver_id"
-                                                            value="{{ $user->id }}">
-                                                        <input type="text" class="form-control mr-3 rtl-mr-0 rtl-ml-3"
-                                                            placeholder="Tulis pesan disini" name="message" id="message">
-                                                        <button type="submit"
-                                                            class="btn btn-primary d-flex align-items-center p-2 mr-3 rtl-mr-0 rtl-ml-3"><i
-                                                                class="far fa-paper-plane mr-0" aria-hidden="true"></i><span
-                                                                class="d-none d-lg-block ml-1 mr-1">Kirim</span></button>
-                                                    </form>
+                                                        @endforeach
+                                                    </div>
                                                 </div>
                                             </div>
                                         @endforeach
@@ -193,156 +181,191 @@
                                             </div>
 
                                             <div class="chat-content scroller">
-                                                @foreach ($chats as $chat)
-                                                    <div
-                                                        class="chat {{ $chat->sender_id != auth()->user()->id ? 'chat-left' : '' }}">
-                                                        <div class="chat-user">
-                                                            <a class="avatar m-0">
-                                                                <img src="{{ asset('assets/images/pages/user.png') }}"
-                                                                    alt="avatar" class="avatar-35">
-                                                            </a>
-                                                            <span
-                                                                class="chat-time mt-1">{{ date('H:i', strtotime($chat->created_at)) }}</span>
-                                                        </div>
-                                                        <div class="chat-detail" name="chat-detail" id="chat-detail">
-                                                            <div class="chat-message">
-                                                                <p>{{ $chat->message }}</p>
+                                                <div class="bubble">
+                                                    @foreach ($chats as $chat)
+                                                        <div
+                                                            class="chat {{ $chat->sender_id != auth()->user()->id ? 'chat-left' : '' }}">
+                                                            <div class="chat-user">
+                                                                <a class="avatar m-0">
+                                                                    <img src="{{ asset('assets/images/pages/user.png') }}"
+                                                                        alt="avatar" class="avatar-35">
+                                                                </a>
+                                                                <span
+                                                                    class="chat-time mt-1">{{ date('H:i', strtotime($chat->created_at)) }}</span>
+                                                            </div>
+                                                            <div class="chat-detail" name="chat-detail">
+                                                                <div class="chat-message">
+                                                                    <p>{{ $chat->message }}</p>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                @endforeach
+                                                    @endforeach
+                                                </div>
 
-                                            </div>
-                                            <div class="chat-footer p-3 bg-white">
-
-                                                <form class="d-flex align-items-center "id="receiver_id"
-                                                    action="{{ route('counselings.send') }}" method="POST">
-                                                    @csrf
-                                                    {{-- <input type="hidden" name="receiver_id" id="receiver_id"
-                                                        value="{{ $user->id }}"> --}}
-                                                    <input type="text" class="form-control mr-3 rtl-mr-0 rtl-ml-3"
-                                                        placeholder="Tulis pesan disini" name="message" id="message">
-                                                    <button type="submit"
-                                                        class="btn btn-primary d-flex align-items-center p-2 mr-3 rtl-mr-0 rtl-ml-3"><i
-                                                            class="far fa-paper-plane mr-0" aria-hidden="true"></i><span
-                                                            class="d-none d-lg-block ml-1 mr-1">Kirim</span></button>
-                                                </form>
 
                                             </div>
                                         </div>
-
                                     </div>
+
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
+            @endrole
+
+
+            <div class="chat-footer p-3 bg-white">
+
+                <form class="d-flex align-items-center "id="receiver_id" action="{{ route('counselings.send') }}"
+                    method="POST">
+                    @csrf
+                    <input type="hidden" name="receiver_id" id="receiver_id" value="{{ auth()->user()->id }}">
+                    <input type="text" class="form-control mr-3 rtl-mr-0 rtl-ml-3" placeholder="Tulis pesan disini"
+                        name="message" id="message">
+                    <button type="submit" class="btn btn-primary d-flex align-items-center p-2 mr-3 rtl-mr-0 rtl-ml-3"><i
+                            class="far fa-paper-plane mr-0" aria-hidden="true"></i><span
+                            class="d-none d-lg-block ml-1 mr-1">Kirim</span></button>
+                </form>
+
             </div>
-        </div>
-    @endrole
-    <script>
-        $(document).ready(function() {
-            //listening change value on message
-            $("input[name='message']").change(function() {
-                //code ini udah jalan, tapi value pada message saat di ganti belum bisa keambil
-                //ntar kalo masih kurang jelas tanya aja
-                message = $("input[name='message']").val();
+            @push('scripts')
+                <script>
+                    // $(document).ready(function() {
+                    //     //listening change value on message
+                    //     $("input[name='message']").change(function() {
+                    //         //code ini udah jalan, tapi value pada message saat di ganti belum bisa keambil
 
-                /**
-                 * NOTE
-                 * PROBLEM
-                 *  value input message ga kebaca pas di ubah isinya
-                 * makanya muncul error
-                 *
-                 * SOLUSI
-                 * 1. Cari gimana cara ngambil value dari inputan message ketika berubah
-                 * 2. kemudian cari bagaimana cara untuk return valuenya
-                 * 3. cari bagaimana cara menggunakan valuenya untuk mengisi message pada method event atau Admin messages
-                 */
-            });
+                    //         message = $("input[name='message']").val();
+
+                    //         /**
+                    //          * NOTE
+                    //          * PROBLEM
+                    //          *  value input message ga kebaca pas di ubah isinya
+                    //          * makanya muncul error
+                    //          *
+                    //          * SOLUSI
+                    //          * 1. Cari gimana cara ngambil value dari inputan message ketika berubah
+                    //          * 2. kemudian cari bagaimana cara untuk return valuenya
+                    //          * 3. cari bagaimana cara menggunakan valuenya untuk mengisi message pada method event atau Admin messages
+                    //          */
+                    //     });
 
 
-        });
-        // Enable pusher logging - don't include this in production
-        Pusher.logToConsole = true;
+                    // });
+                    // Enable pusher logging - don't include this in production
 
-        var pusher = new Pusher('35d483317dcf7d8a6aa6', {
-            cluster: 'ap1'
-        });
-        var channel = pusher.subscribe('counseling_messages');
+
+                    $(document).ready(function() {
 
 
 
-        channel.bind('counseling', function(resp) {
-            alert(JSON.stringify(resp.data));
-            // revei
-            // let receiverId = resp.data.receiver_id;
-            // $.post(`/konseling/${receiverId}`, {
-            //     _token: '{{ csrf_token() }}',
-            //     message: message.data,
-            // }).done(function(res) {
-            //     $(".messages > .message").last().after(res);
-            //     $(document).scrollTop($(document).height());
-            // });
+                        // Punya append
+                        // <div class="chat-message">
+                        //     <strong>${data.sender_id}</strong>:
+                        //     <p>${data.message.message}</p>
+                        //     <small>${data.time}</small>
+                        // </div>
+
+                        // alert(JSON.stringify(resp.data));
+                        // revei
+                        // let receiverId = resp.data.receiver_id;
+                        // $.post(`/konseling/${receiverId}`, {
+                        //     _token: '{{ csrf_token() }}',
+                        //     message: message.data,
+                        // }).done(function(res) {
+                        //     $(".messages > .message").last().after(res);
+                        //     $(document).scrollTop($(document).height());
+                        // });
+
+                        $("form").on("submit", function(event) {
+                            event.preventDefault();
+                            let messager = $("input[name='message']").val();
+                            let receiver_id = $("input[name='receiver_id']").val();
+                            $.ajax({
+                                url: "{{ route('counselings.send') }}",
+                                method: 'POST',
+                                headers: {
+                                    'X-Socket-Id': pusher.connection.socket_id
+                                },
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    message: messager,
+                                    receiver_id: receiver_id
+                                },
+                                success: function(response) {
+                                    console.log("Message sent successfully:", response);
+                                    $("input[name='message']").val('');
+                                },
+                                error: function(error) {
+                                    console.error("Error sending message:", error);
+                                }
+                            });
+                        });
 
 
-            $("form").on("submit", function(event) {
-                event.preventDefault();
+                        Pusher.logToConsole = true;
 
-                let messager = $("input[name='message']").val();
-                // let receiver_id = $("input[name='receiver_id']").val();
+                        var currentUserId = {{ auth()->user()->id }};
 
-                $.ajax({
-                    url: "{{ route('counselings.send') }}",
-                    method: 'POST',
-                    headers: {
-                        'X-Socket-Id': pusher.connection.socket_id
-                    },
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        message: messager,
-                        // message: messager,
-                        // receiver_id: receiver_id,
+                        var pusher = new Pusher('35d483317dcf7d8a6aa6', {
+                            cluster: 'ap1'
+                        });
 
-                    }
-                })
-            })
+                        var channel = pusher.subscribe('counseling_messages');
+                        channel.bind('counseling', function(data) {
 
-            $("#chat-detail").append(`<div class="chat-detail" name="chat-detail" id="chat-detail">
-                                                            <div class="chat-message">
-                                                                <p>${resp.data.message}</p>
-                                                            </div>
-                                                        </div>`)
-        });
+                            var chatPositionClass = data.sender_id != currentUserId ? '' : 'chat-left';
+                            // alert(JSON.stringify(data));
+                            console.log('Received data:', data);
+                            $('.bubble').append(`
+
+                                <div class="chat ${chatPositionClass}">
+                                    <div class="chat-user">
+                                        <a class="avatar m-0">
+                                            <img src="{{ asset('assets/images/pages/user.png') }}"
+                                                alt="avatar" class="avatar-35">
+                                        </a>
+                                        <span
+                                            class="chat-time mt-1">${data.time}</span>
+                                    </div>
+                                    <div class="chat-detail" name="chat-detail">
+                                        <div class="chat-message">
+                                            <p>${data.message.message}</p>
+                                        </div>
+                                    </div>
+                                    </div>
 
 
+                         `);
+                            // $("#chat-detail").scrollTop($("#chat-detail")[0].scrollHeight);
+                        });
+                    });
+                    // Admin messages
 
-        // Admin messages
+                    //     }).done(function(res) {
+                    //         // $(".chat-content").append('<div class="Messages">' + res.data.messager + '</div>');
+                    //         $("input[name='message']").val('');
+                    //         $(document).scrollTop($(document).height());
+                    //         $("form #receiver_id").val('');
+                    //     }).fail(function(xhr) {
+                    //         alert('Error: ' + xhr.responseText)
+                    //     })
 
-        //     }).done(function(res) {
-        //         // $(".chat-content").append('<div class="Messages">' + res.data.messager + '</div>');
-        //         $("input[name='message']").val('');
-        //         $(document).scrollTop($(document).height());
-        //         $("form #receiver_id").val('');
-        //     }).fail(function(xhr) {
-        //         alert('Error: ' + xhr.responseText)
-        //     })
+                    // });
+                </script>
+            @endpush
+            <script>
+                //     // setTimeout(() => {
+                //     //     window.Echo('counseling-messages')
+                //     //         .listen('CounselingMessages', (e) => {
+                //     //             console.log(e);
+                //     //         });
+                //     // }, 200);
 
-        // });
-    </script>
-
-    <script>
-        //     // setTimeout(() => {
-        //     //     window.Echo('counseling-messages')
-        //     //         .listen('CounselingMessages', (e) => {
-        //     //             console.log(e);
-        //     //         });
-        //     // }, 200);
-
-        //     // window.Echo.channel('counseling-messages').listen('CounselingMessages', (e) => {
-        //     //     console.log(e);
-        //     // })
-        //
-    </script>
-@endsection
+                //     // window.Echo.channel('counseling-messages').listen('CounselingMessages', (e) => {
+                //     //     console.log(e);
+                //     // })
+                //
+            </script>
+        @endsection

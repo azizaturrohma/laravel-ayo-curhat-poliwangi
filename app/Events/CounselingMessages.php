@@ -14,14 +14,14 @@ class CounselingMessages implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $data;
+    public $message;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($data)
+    public function __construct($message)
     {
-        $this->data = $data;
+        $this->message = $message;
         //
     }
 

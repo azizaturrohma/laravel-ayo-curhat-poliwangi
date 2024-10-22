@@ -62,6 +62,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('konseling')->group(function () {
         Route::get('/', [CounselingController::class, 'index'])->name('counselings.index');
         Route::post('/send', [CounselingController::class, 'sendMessage'])->name('counselings.send');
+        // Route::post('/send', function(Request $request){
+        //     event(new Message($request->message));
+        //     return ['success'=>true];
+        // });
         // Route::get('/{receiverId}', [CounselingController::class, 'getMessages'])->name('counselings.messages');
         // Route::get('/{receiverId}', [CounselingController::class, 'getMessages'])->name('messages');
         // Route::post('/{receiverId}', [CounselingController::class, 'counselings.Message'])
