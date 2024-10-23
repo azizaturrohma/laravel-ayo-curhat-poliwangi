@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
 
 class UserController extends Controller
 {
@@ -29,24 +31,44 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'phone_number' => 'required',
-            'password' => 'required',
+            'name' => 'required|regex:/^[a-zA-Z\s]+$/|min:5|max:40',
+            'email' => 'required|email|unique:users,email',
+            'phone_number' => 'required|regex:/^[0-9]+$/|unique:users,phone_number|min:11|max:13',
+            'password' => 'required|min:8',
+        ], [
+            'name.required' => 'Nama tidak boleh kosong.',
+            'name.regex' => 'Nama tidak boleh mengandung karakter atau simbol.',
+            'name.min' => 'Panjang nama minimal 5 karakter.',
+            'name.max' => 'Panjang nama maksimal 50 karakter.',
+            'email.required' => 'Email tidak boleh kosong.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'phone_number.required' => 'Nomor telepon tidak boleh kosong.',
+            'phone_number.max' => 'Nomor telepon maksimal 13 karakter.',
+            'phone_number.min' => 'Nomor telepon minimal 11 karakter.',
+            'phone_number.regex' => 'Nomor telepon hanya boleh mengandung angka.',
+            'phone_number.unique' => 'Nomor telepon ini sudah terdaftar.',
+            'password.required' => 'Password tidak boleh kosong.',
+            'password.min' => 'Password harus memiliki minimal 6 karakter.',
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
+            // Simpan data ke database
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone_number' => $request->phone_number,
+                'password' => Hash::make($request->password),
+            ]);
 
-        $user->assignRole('Petugas');
-
-        session()->flash('success', 'Data berhasil disimpan!');
-
-        return redirect()->route('users.index')->with('success', 'Berhasil menambahkan data petugas');
+            $user->assignRole('Petugas');
+            session()->flash('success', 'Data berhasil disimpan!');
+            return redirect()->route('users.index')->with('modal_type', null);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['store_error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()])
+                ->withInput()
+                ->with('modal_type', 'create');
+     }
     }
 
     public function show(User $user)
@@ -60,24 +82,46 @@ class UserController extends Controller
     {
         return view('user.edit', compact('user'));
     }
-
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name' => 'required',
-            'password' => 'nullable',
-            'email' => 'nullable',
-            'phone_number' => 'nullable',
+            'name' => 'required|regex:/^[a-zA-Z\s]+$/|min:5|max:40',
+            'email' => 'required|email|unique:users,email',
+            'phone_number' => 'required|regex:/^[0-9]+$/|min:11|max:13',
+            'password' => 'min:6|nullable',
+        ], [
+            'name.required' => 'Nama tidak boleh kosong.',
+            'name.regex' => 'Nama tidak boleh mengandung karakter atau simbol.',
+            'name.min' => 'Panjang nama minimal 5 karakter.',
+            'name.max' => 'Panjang nama maksimal 50 karakter.',
+            'email.required' => 'Email tidak boleh kosong.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email ini sudah terdaftar.',
+            'phone_number.required' => 'Nomor telepon tidak boleh kosong.',
+            'phone_number.max' => 'Nomor telepon maksimal 13 karakter.',
+            'phone_number.min' => 'Nomor telepon minimal 11 karakter.',
+            'phone_number.regex' => 'Nomor telepon hanya boleh mengandung angka.',
+            'password.min' => 'Password harus memiliki minimal 6 karakter.',
         ]);
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'password' => $request->password ? Hash::make($request->password) : $user->password,
-        ]);
+        try {
+            // Update user data
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone_number' => $request->phone_number,
+                'password' => $request->filled('password') ? Hash::make($request->password) : $user->password,
+            ]);
 
-        return redirect()->route('users.index')->with('success', 'Data petugas berhasil diperbarui');
+            session()->flash('success', 'Data berhasil diperbarui!');
+            return redirect()->route('users.index')->with(['modal_type' => 'edit', 'another_key' => null]);
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withErrors(['update_error' => 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage()])
+                ->withInput()
+                ->with('modal_type', 'edit');
+
+        }
     }
 
     public function indexProfile(User $user)
@@ -95,21 +139,30 @@ class UserController extends Controller
     }
 
     public function updateProfile(Request $request)
-    {
-        $request->validate([
-            'email' => 'nullable|email',
-            'phone_number' => 'nullable',
-            'complete_address' => 'nullable',
-        ]);
+{
+    $request->validate([
+        'email' => 'nullable|email|unique:users,email,' . auth()->user()->id,
+        'phone_number' => 'nullable|min:11|max:13|regex:/^[0-9]+$/',
+        'complete_address' => 'nullable|min:15',
+    ], [
+        'email.unique' => 'Email ini sudah terdaftar.',
+        'email.email' => 'Format email tidak valid.',
+        'phone_number.max' => 'Nomor telepon maksimal 13 karakter.',
+        'phone_number.min' => 'Nomor telepon minimal 11 karakter.',
+        'phone_number.regex' => 'Nomor telepon hanya boleh mengandung angka.',
+        'complete_address.min' => 'Alamat harus memiliki minimal 15 karakter.',
+    ]);
 
-        User::find(auth()->user()->id)->update([
-            'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'complete_address' => $request->complete_address,
-        ]);
+    User::find(auth()->user()->id)->update([
+        'email' => $request->email,
+        'phone_number' => $request->phone_number,
+        'complete_address' => $request->complete_address,
+    ]);
 
-        return redirect()->route('users.profile');
-    }
+    session()->flash('success', 'Profil berhasil diperbarui!');
+
+    return redirect()->back();
+}
 
     public function updateUserStatus(Request $request, $id)
     {

@@ -56,6 +56,36 @@ class ReportingController extends Controller
 
     public function store(Request $request)
     {
+        // Validasi input
+        $request->validate([
+            'reporter_as' => 'required|not_in:-- Pilih --', // Pastikan pilihan valid
+            'case_type_id' => 'required|not_in:-- Pilih --',
+            'case_description' => 'required|string|min:10',
+            'chronology' => 'required|string|min:10',
+            'reported_status_id' => 'required|not_in:-- Pilih --',
+            'optional_phone_number' => 'nullable|digits_between:11,13|regex:/^[0-9]+$/',
+            'optional_email' => 'nullable|email',
+            'reporting_reasons' => 'required|array|min:1',
+            'victim_requirements' => 'required|array|min:1'
+        ], [
+            'reporter_as.required' => 'Pilih peran pelapor.',
+            'reporter_as.not_in' => 'Status pelapor tidak valid.',
+            'case_type_id.required' => 'Pilih jenis kasus.',
+            'case_type_id.not_in' => 'Jenis kasus tidak valid.',
+            'reported_status_id.required' => 'Pilih status terlapor.',
+            'reported_status_id.not_in' => 'Status terlapor tidak valid.',
+            'case_description.required' => 'Deskripsi kasus wajib diisi.',
+            'case_description.min' => 'Deskripsi kasus wajib diisi setidaknya 10 Karakter.',
+            'chronology.required' => 'Cerita singkat peristiwa wajib diisi.',
+            'chronology.min' => 'Cerita singkat peristiwa wajib diisi setidaknya 10 Karakter.',
+            'optional_phone_number.digits_between' => 'Nomor telepon harus terdiri dari 11-13 digit.',
+            'optional_phone_number.regex' => 'Nomor telepon harus terdiri dari angka.',
+            'optional_email.email' => 'Alamat email tidak valid.',
+            'reporting_reasons.required' => 'Alasan pengaduan wajib dipilih setidaknya 1',
+            'victim_requirements.required' => 'Kebutuhan korban wajib dipilih setidaknya 1'
+        ]);
+
+        // Simpan data setelah validasi
         $reporting = new Reporting();
         $reporting->reporter_id = Auth::id();
         $reporting->reporter_as = $request->input('reporter_as');
@@ -77,6 +107,7 @@ class ReportingController extends Controller
 
         return redirect()->route('reportings.user')->with('success', 'Pengaduan berhasil ditambahkan');
     }
+
 
     public function show(Reporting $reporting)
     {
