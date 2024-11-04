@@ -1,4 +1,5 @@
-<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -13,15 +14,29 @@
                     @method('PATCH')
                     <div class="form-group">
                         <label for="name">Nama</label>
-                        <input type="text" name="name" class="form-control edit-name" value="{{ $user->name }}" required>
+                        <input type="text" name="name" class="form-control edit-name" value="{{ old('name') }}">
+                        <span class="text-danger"></span>
+                        @error('name')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="form-group">
-                        <label for="name">Email</label>
-                        <input type="email" name="email" class="form-control edit-email">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" class="form-control edit-email"
+                            value="{{ old('email') }}">
+                        <span class="text-danger"></span>
+                        @error('email')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="form-group">
-                        <label for="name">Nomor Telepon</label>
-                        <input type="text" name="phone_number" class="form-control edit-phone-number">
+                        <label for="phone_number">Nomor Telepon</label>
+                        <input type="text" name="phone_number" class="form-control edit-phone-number"
+                            value="{{ old('phone_number') }}">
+                        <span class="text-danger"></span>
+                        @error('phone_number')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
@@ -31,14 +46,95 @@
                                 <span class="input-group-text" id="togglePassword"><i class="fa fa-eye"></i></span>
                             </div>
                         </div>
+                        <span class="text-danger"></span>
+                        @error('password')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                     <input type="hidden" name="user_id" value="">
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" id="edit-account" class="btn btn-primary">Simpan Perubahan</button>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function() {
+        $('#edit-modal-form').on('submit', function(e) {
+            e.preventDefault();
+            $('.text-danger').text('');
+
+            let isValid = true;
+
+            function setError(inputName, message) {
+                // let inputField = $(input[name = "${inputName}"]);
+                let inputField = $(`input[name="${inputName}"]`);
+                inputField.closest('.form-group').find('.text-danger').text(message);
+                // alert(`Error pada field: ${inputName} - ${message}`);
+                //  console.log(`Error pada field: ${inputName} - ${message}`);
+            }
+
+            let name = $('.edit-name').val();
+            if (!name.match(/^[a-zA-Z ]+$/)) {
+                setError('name', 'Nama tidak boleh mengandung karakter atau simbol.');
+                isValid = false;
+            } else if (name.length < 3 || name.length > 50) {
+                setError('name', 'Nama harus terdiri dari 3 sampai 50 karakter.');
+                isValid = false;
+            }
+
+
+            let email = $('.edit-email').val();
+            if (!email.match(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)) {
+                setError('email', 'Format email tidak valid');
+                isValid = false;
+            }
+
+            let phoneNumber = $('.edit-phone-number').val();
+            if (!phoneNumber.match(/^[0-9]+$/) || phoneNumber.length < 11 || phoneNumber.length > 13) {
+                setError('phone_number',
+                    'Nomor telepon hanya boleh angka dan minimal 11 karakter maksimal 13 karakter');
+                isValid = false;
+            }
+
+            let password = $('#password').val();
+            if (password.length > 0 && password.length < 8) {
+                setError('password', 'Password minimal 8 karakter');
+                isValid = false;
+            }
+
+            if (isValid) {
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Ingin memperbarui data ini?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, simpan!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            }
+        });
+
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        @endif
+    });
+</script>
