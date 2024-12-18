@@ -24,11 +24,19 @@ class CounselingController extends Controller
 
     public function sendMessage(Request $request)
     {
+        if (!Auth::check()) {
+            return response()->json([
+                'errror' => 'user belum login'
+            ], 401);
+        }
+
         $message = Counseling::create([
             'sender_id' => Auth::id(),
-            'receiver_id' => in_array(auth()->user()->getRoleNames()[0], ['Tamu Satgas', 'admin']) ? 1 : $request->receiver_id,
+            // 'receiver_id' => in_array(auth()->user()->getRoleNames()[0], ['Tamu Satgas', 'admin']) ? 1 : $request->receiver_id,
+            'receiver_id' => $request->receiver_id,
             'message' => $request->message,
         ]);
+
 
         $sendMessage = [
             'sender_id' => $message->sender_id,
@@ -37,6 +45,7 @@ class CounselingController extends Controller
             'message' => $message->message,
         ];
 
+        //
 
         // CounselingMessages::dispatch($message);
         // return dd($sendMessage);

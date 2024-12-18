@@ -9,12 +9,14 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 
 class CounselingMessages implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $message;
+    // public $currentUserId = auth()->user()->id;
 
     /**
      * Create a new event instance.
@@ -22,6 +24,7 @@ class CounselingMessages implements ShouldBroadcast
     public function __construct($message)
     {
         $this->message = $message;
+        // dd($this->message);
         //
     }
 
@@ -33,7 +36,7 @@ class CounselingMessages implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('counseling_messages'),
+            new PrivateChannel('counseling_messages' . auth()->user->id),
         ];
     }
     public function broadcastAs()

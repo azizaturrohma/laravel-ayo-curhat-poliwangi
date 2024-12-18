@@ -29,9 +29,11 @@
                                     <div class="chat-sidebar-channel scroller mt-4 pl-3 rtl-pr-3">
                                         <!-- <h5 class="">Public Channels</h5> -->
                                         <ul class="iq-chat-ui nav flex-column nav-pills">
+
                                             @foreach ($users as $user)
                                                 <li>
                                                     <a data-toggle="pill" href="#chatbox{{ $user->id }}">
+
                                                         <div class="d-flex align-items-center">
                                                             <div class="avatar mx-2 rtl-ml-2 rtl-mr-0">
                                                                 <img src="{{ asset('assets/images/pages/user.png') }}"
@@ -58,6 +60,8 @@
                                             </div>
                                         </div>
                                         @foreach ($users as $user)
+                                            {{-- {{ $user = $user->id }} --}}
+                                            {{-- {{ dd($user->id) }} --}}
                                             <div class="tab-pane fade ctive show" id="chatbox{{ $user->id }}"
                                                 role="tabpanel">
                                                 <div class="chat-head">
@@ -220,12 +224,14 @@
                 <form class="d-flex align-items-center "id="receiver_id" action="{{ route('counselings.send') }}"
                     method="POST">
                     @csrf
-                    <input type="hidden" name="receiver_id" id="receiver_id" value="{{ auth()->user()->id }}">
+                    @foreach ($users as $user)
+                        <input type="hidden" name="receiver_id" id="receiver_id" value="{{ $user->id }}">
+                    @endforeach
                     <input type="text" class="form-control mr-3 rtl-mr-0 rtl-ml-3" placeholder="Tulis pesan disini"
                         name="message" id="message">
                     <button type="submit" class="btn btn-primary d-flex align-items-center p-2 mr-3 rtl-mr-0 rtl-ml-3"><i
                             class="far fa-paper-plane mr-0" aria-hidden="true"></i><span
-                            class="d-none d-lg-block ml-1 mr-1">Kirim</span></button>
+                            class="d-none d-lg-block ml-1 mr-1">Kirim </span></button>
                 </form>
 
             </div>
@@ -257,9 +263,6 @@
 
 
                     $(document).ready(function() {
-
-
-
                         // Punya append
                         // <div class="chat-message">
                         //     <strong>${data.sender_id}</strong>:
@@ -282,6 +285,8 @@
                             event.preventDefault();
                             let messager = $("input[name='message']").val();
                             let receiver_id = $("input[name='receiver_id']").val();
+
+                            console.log("receiver ID", receiver_id);
                             $.ajax({
                                 url: "{{ route('counselings.send') }}",
                                 method: 'POST',
@@ -312,10 +317,10 @@
                             cluster: 'ap1'
                         });
 
-                        var channel = pusher.subscribe('counseling_messages');
+                        var channel = pusher.subscribe('private-counseling_messages');
                         channel.bind('counseling', function(data) {
-
-                            var chatPositionClass = data.sender_id != currentUserId ? '' : 'chat-left';
+                            let sender = $("input[name='receiver_id']").val();
+                            var chatPositionClass = data.sender_id != sender ? '' : 'chat-left';
                             // alert(JSON.stringify(data));
                             console.log('Received data:', data);
                             $('.bubble').append(`
@@ -338,7 +343,10 @@
 
 
                          `);
-                            // $("#chat-detail").scrollTop($("#chat-detail")[0].scrollHeight);
+                            var chatDetailElem = document.getElementById("chat-detail");
+                            if (chatDetailElem) {
+                                chatDetailElem.scrollTop = chatDetailElem.scrollHeight;
+                            }
                         });
                     });
                     // Admin messages
