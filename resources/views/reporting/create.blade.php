@@ -17,7 +17,7 @@
                     @csrf
                     <div class="form-group">
                         <label>Status Pelapor</label>
-                        <select class="form-control mb-3" name="reporter_as">
+                        <select class="form-control mb-3" name="reporter_as" required>
                             <option selected="">-- Pilih --</option>
                             <option value="saksi">Saksi</option>
                             <option value="korban">Korban</option>
@@ -26,7 +26,7 @@
 
                     <div class="form-group">
                         <label>Jenis Kasus</label>
-                        <select class="form-control mb-3" name="case_type_id">
+                        <select class="form-control mb-3" name="case_type_id" required>
                             <option selected="">-- Pilih --</option>
                             @foreach($caseTypes as $caseType)
                             <option value="{{ $caseType->id }}">{{ $caseType->name }}</option>
@@ -36,17 +36,17 @@
 
                     <div class="form-group">
                         <label for="case_description">Deskripsi Kasus</label>
-                        <textarea class="form-control" id="case_description" name="case_description" rows="1"></textarea>
+                        <textarea class="form-control" id="case_description" name="case_description" rows="1" required></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="chronology">Cerita Singkat Peristiwa</label>
-                        <textarea class="form-control" id="chronology" name="chronology" rows="3"></textarea>
+                        <textarea class="form-control" id="chronology" name="chronology" rows="3" required></textarea>
                     </div>
 
                     <div class="form-group">
                         <label>Status Terlapor</label>
-                        <select class="form-control mb-3" name="reported_status_id">
+                        <select class="form-control mb-3" name="reported_status_id" required>
                             <option selected="">-- Pilih --</option>
                             @foreach($reportedStatuses as $reportedStatus)
                             <option value="{{ $reportedStatus->id }}">{{ $reportedStatus->name }}</option>
@@ -59,7 +59,7 @@
                         <div class="form-control p-3" style="height:auto;">
                             @foreach($disabilityTypes as $disabilityType)
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="disability_types[]" value="{{ $disabilityType->id }}">
+                                <input class="form-check-input" type="checkbox" name="disability_types[]" value="{{ $disabilityType->id }}" required>
                                 <label class="form-check-label">{{ $disabilityType->name }}</label>
                             </div>
                             @endforeach
@@ -76,7 +76,7 @@
                         <div class="form-control p-3" style="height:auto;">
                             @foreach($reportingReasons as $reportingReason)
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="reporting_reasons[]" value="{{ $reportingReason->id }}">
+                                <input class="form-check-input" type="checkbox" name="reporting_reasons[]" value="{{ $reportingReason->id }}" required>
                                 <label class="form-check-label">{{ $reportingReason->name }}</label>
                             </div>
                             @endforeach
@@ -103,7 +103,7 @@
                         <div class="form-control p-3" style="height:auto;">
                             @foreach($victimRequirements as $victimRequirement)
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="victim_requirements[]" value="{{ $victimRequirement->id }}">
+                                <input class="form-check-input" type="checkbox" name="victim_requirements[]" value="{{ $victimRequirement->id }}" required>
                                 <label class="form-check-label">{{ $victimRequirement->name }}</label>
                             </div>
                             @endforeach

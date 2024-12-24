@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/show/{reporting}', [ReportingController::class, 'show'])->middleware(['can:show_detail_reportings', 'protect_reporting'])->name('reportings.show');
 
         // Progress Pengaduan
-        Route::get('/{reporting}/progress', [ReportingController::class, 'indexReportingProgress'])->middleware(['can:read_reporting_progress', 'protect_reporting'])->name('reportings.progress');
+        Route::get('/{id}/progress', [ReportingController::class, 'indexReportingProgress'])->middleware(['can:read_reporting_progress', 'protect_reporting'])->name('reportings.progress');
         Route::post('/progress/create', [ReportingController::class, 'storeReportingProgress'])->middleware('can:create_reporting_progress')->name('reportings.progress.create');
 
         // Archive / Unarchive

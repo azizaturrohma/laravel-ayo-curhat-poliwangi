@@ -86,16 +86,31 @@ class ReportingController extends Controller
         return $pdf->stream();
     }
 
-    public function indexReportingProgress(Reporting $reporting)
+    // public function indexReportingProgress(Reporting $reporting)
+    // {
+    //     $title = 'Progress Pengaduan';
+
+    //     $reportingProgress = ReportingProgress::where('reporting_id', $reporting->id)->get();
+
+    //     return view('reporting.index-progress', compact(
+    //         'title',
+    //         'reporting',
+    //         'reportingProgress'
+    //     ));
+    // }
+
+    public function indexReportingProgress($id)
     {
         $title = 'Progress Pengaduan';
 
-        $reportingProgress = ReportingProgress::where('reporting_id', $reporting->id)->get();
+        $reporting = Reporting::findOrFail($id);
+
+        $reportingProgress = ReportingProgress::where('reporting_id', $id)->get();
 
         return view('reporting.index-progress', compact(
             'title',
             'reporting',
-            'reportingProgress'
+            'reportingProgress',
         ));
     }
 
