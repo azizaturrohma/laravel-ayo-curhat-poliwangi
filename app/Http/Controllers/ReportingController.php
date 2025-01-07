@@ -99,21 +99,6 @@ class ReportingController extends Controller
         ));
     }
 
-    // public function indexReportingProgress($id)
-    // {
-    //     $title = 'Progress Pengaduan';
-
-    //     $reporting = Reporting::findOrFail($id);
-
-    //     $reportingProgress = ReportingProgress::where('reporting_id', $id)->get();
-
-    //     return view('reporting.index-progress', compact(
-    //         'title',
-    //         'reporting',
-    //         'reportingProgress',
-    //     ));
-    // }
-
     public function storeReportingProgress(Request $request)
     {
         $request->validate([
