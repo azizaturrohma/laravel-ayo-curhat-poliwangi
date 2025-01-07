@@ -86,33 +86,33 @@ class ReportingController extends Controller
         return $pdf->stream();
     }
 
-    // public function indexReportingProgress(Reporting $reporting)
-    // {
-    //     $title = 'Progress Pengaduan';
-
-    //     $reportingProgress = ReportingProgress::where('reporting_id', $reporting->id)->get();
-
-    //     return view('reporting.index-progress', compact(
-    //         'title',
-    //         'reporting',
-    //         'reportingProgress'
-    //     ));
-    // }
-
-    public function indexReportingProgress($id)
+    public function indexReportingProgress(Reporting $reporting)
     {
         $title = 'Progress Pengaduan';
 
-        $reporting = Reporting::findOrFail($id);
-
-        $reportingProgress = ReportingProgress::where('reporting_id', $id)->get();
+        $reportingProgress = ReportingProgress::where('reporting_id', $reporting->id)->get();
 
         return view('reporting.index-progress', compact(
             'title',
             'reporting',
-            'reportingProgress',
+            'reportingProgress'
         ));
     }
+
+    // public function indexReportingProgress($id)
+    // {
+    //     $title = 'Progress Pengaduan';
+
+    //     $reporting = Reporting::findOrFail($id);
+
+    //     $reportingProgress = ReportingProgress::where('reporting_id', $id)->get();
+
+    //     return view('reporting.index-progress', compact(
+    //         'title',
+    //         'reporting',
+    //         'reportingProgress',
+    //     ));
+    // }
 
     public function storeReportingProgress(Request $request)
     {
@@ -126,7 +126,7 @@ class ReportingController extends Controller
         $progress->note = $request->input('note');
         $progress->save();
 
-        return redirect()->route('reportings.progress', ['id' => $request->reporting_id])->with('success', 'Progress berhasil ditambahkan');
+        return redirect()->route('reportings.progress', ['reporting' => $request->reporting_id])->with('success', 'Progress berhasil ditambahkan');
     }
 
     public function updateReportingStatus(Request $request, $id)
