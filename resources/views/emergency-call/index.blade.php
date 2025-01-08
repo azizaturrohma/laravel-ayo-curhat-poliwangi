@@ -23,7 +23,7 @@
                                 PANGGILAN DARURAT
                             </h2>
                             <p class="mr-4 mb-4">Lakukan panggilan darurat ketika anda membutuhkan pelayanan sesegera mungkin. Kami akan melakukan yang terbaik untuk anda, kepuasan anda adalah prioritas bagi kami.</p>
-                            <a href="https://wa.me/6282139443573" target="_blank">
+                            <a href="https://wa.me/6285732868153" target="_blank">
                                 <button type="button" class="mr-4 btn btn-primary">
                                     <i class="ri-whatsapp-line"></i>Hubungi Sekarang
                                 </button>
