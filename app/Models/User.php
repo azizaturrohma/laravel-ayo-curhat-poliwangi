@@ -63,4 +63,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Counseling::class, 'sender_id');
     }
+
+    public function username()
+    {
+        return 'name';
+    }
+
 }

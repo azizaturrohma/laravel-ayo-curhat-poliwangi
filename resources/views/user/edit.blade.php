@@ -69,43 +69,38 @@
         $('#edit-modal-form').on('submit', function(e) {
             e.preventDefault();
             $('.text-danger').text('');
-
             let isValid = true;
 
             function setError(inputName, message) {
-                // let inputField = $(input[name = "${inputName}"]);
                 let inputField = $(`input[name="${inputName}"]`);
                 inputField.closest('.form-group').find('.text-danger').text(message);
-                // alert(`Error pada field: ${inputName} - ${message}`);
-                //  console.log(`Error pada field: ${inputName} - ${message}`);
             }
 
             let name = $('.edit-name').val();
-            if (!name.match(/^[a-zA-Z ]+$/)) {
+            if (!name.match(/^[a-zA-Z\s]+$/)) {
                 setError('name', 'Nama tidak boleh mengandung karakter atau simbol.');
                 isValid = false;
-            } else if (name.length < 3 || name.length > 50) {
-                setError('name', 'Nama harus terdiri dari 3 sampai 50 karakter.');
+            } else if (name.length < 5 || name.length > 40) {
+                setError('name', 'Nama harus terdiri dari 5 sampai 40 karakter.');
                 isValid = false;
             }
 
-
             let email = $('.edit-email').val();
             if (!email.match(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)) {
-                setError('email', 'Format email tidak valid');
+                setError('email', 'Format email tidak valid.');
                 isValid = false;
             }
 
             let phoneNumber = $('.edit-phone-number').val();
             if (!phoneNumber.match(/^[0-9]+$/) || phoneNumber.length < 11 || phoneNumber.length > 13) {
                 setError('phone_number',
-                    'Nomor telepon hanya boleh angka dan minimal 11 karakter maksimal 13 karakter');
+                    'Nomor telepon hanya boleh angka dengan panjang 11-13 karakter.');
                 isValid = false;
             }
 
             let password = $('#password').val();
-            if (password.length > 0 && password.length < 8) {
-                setError('password', 'Password minimal 8 karakter');
+            if (password.length > 0 && password.length < 6) {
+                setError('password', 'Password minimal 6 karakter.');
                 isValid = false;
             }
 
@@ -137,4 +132,12 @@
             });
         @endif
     });
+
+    @if ($errors->has('update_error'))
+        <
+        div class = "alert alert-danger" >
+        {{ $errors->first('update_error') }}
+            <
+            /div>
+    @endif
 </script>

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 
 class UserController extends Controller
@@ -86,8 +87,18 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|regex:/^[a-zA-Z\s]+$/|min:5|max:40',
-            'email' => 'required|email|unique:users,email',
-            'phone_number' => 'required|regex:/^[0-9]+$/|min:11|max:13',
+            'email' => [
+            'required',
+            'email',
+            Rule::unique('users', 'email')->ignore($user->id),
+        ],
+            'phone_number' => [
+            'required',
+            'regex:/^[0-9]+$/',
+            'min:11',
+            'max:13',
+            Rule::unique('users', 'phone_number')->ignore($user->id),
+        ],
             'password' => 'min:6|nullable',
         ], [
             'name.required' => 'Nama tidak boleh kosong.',
@@ -101,7 +112,8 @@ class UserController extends Controller
             'phone_number.max' => 'Nomor telepon maksimal 13 karakter.',
             'phone_number.min' => 'Nomor telepon minimal 11 karakter.',
             'phone_number.regex' => 'Nomor telepon hanya boleh mengandung angka.',
-            'password.min' => 'Password harus memiliki minimal 6 karakter.',
+            'phone_number.unique' => 'Nomor telepon ini sudah terdaftar.',
+           // 'password.min' => 'Password harus memiliki minimal 6 karakter.',
         ]);
 
         try {
@@ -142,7 +154,7 @@ class UserController extends Controller
 {
     $request->validate([
         'email' => 'nullable|email|unique:users,email,' . auth()->user()->id,
-        'phone_number' => 'nullable|min:11|max:13|regex:/^[0-9]+$/',
+        'phone_number' => 'required|unique:users,phone_number,min:11|max:13|regex:/^[0-9]+$/',
         'complete_address' => 'nullable|min:15',
     ], [
         'email.unique' => 'Email ini sudah terdaftar.',
