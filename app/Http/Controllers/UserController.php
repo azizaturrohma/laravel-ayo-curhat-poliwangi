@@ -113,7 +113,7 @@ class UserController extends Controller
             'phone_number.min' => 'Nomor telepon minimal 11 karakter.',
             'phone_number.regex' => 'Nomor telepon hanya boleh mengandung angka.',
             'phone_number.unique' => 'Nomor telepon ini sudah terdaftar.',
-           // 'password.min' => 'Password harus memiliki minimal 6 karakter.',
+            'password.min' => 'Password harus memiliki minimal 6 karakter.',
         ]);
 
         try {
