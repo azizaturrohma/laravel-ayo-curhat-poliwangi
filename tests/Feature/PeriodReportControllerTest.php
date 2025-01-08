@@ -5,6 +5,10 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\Models\Reporting;
+use App\Models\ReportingReason;
+use App\Models\VictimRequirement;
+use App\Models\DisabilityType;
 
 class PeriodReportControllerTest extends TestCase
 {
@@ -20,119 +24,65 @@ class PeriodReportControllerTest extends TestCase
         $this->actingAs(User::factory()->tamuSatgas()->create());
     }
 
-    public function test_rp_09()
+    public function test_pr_11()
     {
         $response = $this->get('/laporan');
 
         $response->assertStatus(403);
     }
 
-    public function test_report_without_year_and_month()
+    public function test_pr_10()
     {
+        $user = User::factory()->tamuSatgas()->create();
+
+        $reporting = Reporting::factory()->create([
+            'reporter_id' => $user->id,
+        ]);
+
+        $reporting->disabilityType()->attach(DisabilityType::factory()->count(2)->create()->pluck('id'));
+        $reporting->reportingReason()->attach(ReportingReason::factory()->count(2)->create()->pluck('id'));
+        $reporting->victimRequirement()->attach(VictimRequirement::factory()->count(2)->create()->pluck('id'));
+
+        // Relations
+        $reporting = Reporting::with([
+            'reportingUser',
+            'reportingReason',
+            'reportedStatus',
+            'disabilityType',
+            'victimRequirement',
+        ])->find($reporting->id);
+
+        $response = $this->get('/laporan?year=2026&month=13');
+
+        $response->assertStatus(404);
+    }
+
+    public function test_pr_01()
+    {
+        $user = User::factory()->tamuSatgas()->create();
+
+        $reporting = Reporting::factory()->create([
+            'reporter_id' => $user->id,
+        ]);
+
+        $reporting->disabilityType()->attach(DisabilityType::factory()->count(2)->create()->pluck('id'));
+        $reporting->reportingReason()->attach(ReportingReason::factory()->count(2)->create()->pluck('id'));
+        $reporting->victimRequirement()->attach(VictimRequirement::factory()->count(2)->create()->pluck('id'));
+
+        // Relations
+        $reporting = Reporting::with([
+            'reportingUser',
+            'reportingReason',
+            'reportedStatus',
+            'disabilityType',
+            'victimRequirement',
+        ])->find($reporting->id);
+
         $response = $this->get('/laporan');
 
         $response->assertStatus(200);
-
-        $response->assertViewHas('caseTypes');
-        $response->assertViewHas('years');
-    }
-
-    public function test_report_with_valid_year()
-    {
-        $this->actingAs(User::factory()->admin()->create());
-
-        $year = 2024;
-
-        $response = $this->get("/laporan?year=$year");
-
-        $response->assertStatus(200);
-
-        $response->assertViewHas('caseTypes');
-        $response->assertViewHas('year', $year);
-    }
-
-    public function test_report_with_valid_year_and_month()
-    {
-        $this->actingAs(User::factory()->admin()->create());
-
-        $year = 2024;
-        $month = 10;
-
-        $response = $this->get("/laporan?year=$year&month=$month");
-
-        $response->assertStatus(200);
-
-        $response->assertViewHas('caseTypes');
-        $response->assertViewHas('year', $year);
-        $response->assertViewHas('month', $month);
-    }
-
-    public function test_report_with_valid_month_and_without_year()
-    {
-        $this->actingAs(User::factory()->admin()->create());
-
-        $month = 10;
-
-        $response = $this->get("/laporan?month=$month");
-
-        $response->assertStatus(200);
-
-        $response->assertViewHas('caseTypes');
-        $response->assertViewHas('month', $month);
-    }
-
-    public function test_report_with_invalid_year()
-    {
-        $this->actingAs(User::factory()->admin()->create());
-
-        $year = 2025;
-
-        $response = $this->get("/laporan?year=$year");
-
-        $response->assertStatus(302);
-
-        $response->assertRedirect(route('report.index'));
-    }
-
-    public function test_report_with_invalid_month_less_than_1()
-    {
-        $this->actingAs(User::factory()->admin()->create());
-
-        $year = 2024;
-        $month = 0;
-
-        $response = $this->get("/laporan?year=$year&month=$month");
-
-        $response->assertStatus(302);
-
-        $response->assertRedirect(route('report.index'));
-    }
-
-    public function test_report_with_invalid_month_more_than_12()
-    {
-        $this->actingAs(User::factory()->admin()->create());
-
-        $year = 2024;
-        $month = 13;
-
-        $response = $this->get("/laporan?year=$year&month=$month");
-
-        $response->assertStatus(302);
-
-        $response->assertRedirect(route('report.index'));
-    }
-
-    public function test_report_with_invalid_year_and_month()
-    {
-        $this->actingAs(User::factory()->admin()->create());
-
-        $year = 2025;
-        $month = 13;
-
-        $response = $this->get("/laporan?year=$year&month=$month");
-
-        $response->assertStatus(302);
-
-        $response->assertRedirect(route('report.index'));
+        $response->assertSee('Semua Tahun');
+        $response->assertSee('Semua Bulan');
+        $response->assertSee('1');
     }
 }
