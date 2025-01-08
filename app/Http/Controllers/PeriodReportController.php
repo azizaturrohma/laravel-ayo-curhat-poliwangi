@@ -23,11 +23,12 @@ class PeriodReportController extends Controller
             ->orderBy('year', 'desc')
             ->pluck('year');
 
-        // Bulan yang valid
-        $validMonth = $month > 0 && $month <= 12;
+        // Validasi tahun dan bulan
+        $isValidYear = $year && $validYear->contains((int) $year);
+        $isValidMonth = $month && is_numeric($month) && $month > 0 && $month <= 12;
 
-        if (($year || $month) && !($validYear && $validMonth)) {
-            return redirect()->route('report.index');
+        if (($year || $month) && !($isValidYear && $isValidMonth)) {
+            abort(404);
         }
 
         // Total pengaduan per jenis kasus
@@ -51,18 +52,23 @@ class PeriodReportController extends Controller
         $year = $request->input('year');
         $month = $request->input('month');
 
+        // Validasi tahun dan bulan
+        $isValidYear = $year && is_numeric($year) && (int) $year <= now()->year; // Pastikan tahun valid dan tidak lebih dari tahun saat ini
+        $isValidMonth = $month && is_numeric($month) && $month >= 1 && $month <= 12; // Pastikan bulan valid (1-12)
+
+        if (($year || $month) && !($isValidYear && $isValidMonth)) {
+            abort(404);
+        }
+
         if ($year && $month) {
             $period = DateTime::createFromFormat('!m', $month)->format('F') . ' ' . $year;
         } elseif ($year) {
-            $period = 'Tahun' . $year;
+            $period = 'Tahun ' . $year;
         } else {
             $period = 'Semua Tahun';
         }
 
-        if (($year > now()->year) && ($month < 1 || $month > 12)) {
-            return redirect()->route('report.index');
-        }
-
+        // Total pengaduan per jenis kasus
         $caseTypes = CaseType::withCount(['reportings' => function ($query) use ($year, $month) {
             if ($year) {
                 $query->whereYear('created_at', $year);
@@ -72,6 +78,7 @@ class PeriodReportController extends Controller
             }
         }])->get();
 
+        // Generate PDF
         $pdf = Pdf::loadView('period-report.download', compact('title', 'period', 'caseTypes'));
 
         return $pdf->stream();
